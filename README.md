@@ -1,6 +1,15 @@
 # Local-First Explorer
 
 A high-performance, offline-capable user directory application built with Next.js, Zustand, and Dexie.js (IndexedDB).
+## SCREENSHOTS
+### DESKTOP
+<img width="1143" height="925" alt="image" src="https://github.com/user-attachments/assets/f4716875-54d2-4ccc-982a-7b4a9c2138ff" />
+
+### MOBILE
+<img width="604" height="953" alt="image" src="https://github.com/user-attachments/assets/baccf2e0-3833-4d7a-9e04-202d95a94f8a" />
+
+### DARK MODE
+<img width="1150" height="922" alt="image" src="https://github.com/user-attachments/assets/4ac63029-8ec2-461b-9941-6a5e0146b877" />
 
 ## How to install dependencies
 
