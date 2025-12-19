@@ -29,7 +29,7 @@ const Pagination = ({
           disabled={isLoading}
           className="px-4 py-2 bg-black text-white rounded-lg disabled:opacity-50 hover:bg-gray-800 text-sm font-medium transition-colors"
         >
-          {isLoading ? "Loading..." : "Next"}
+          Next
         </button>
       </div>
     </div>

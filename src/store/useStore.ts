@@ -1,12 +1,13 @@
-import { create } from 'zustand';
-import { db, User } from '@/lib/db';
+import { create } from "zustand";
+import { db } from "@/lib/db";
+import { User } from "@/types/user";
 
 interface AppState {
-  users: User[];   
+  users: User[];
   currentPage: number;
   isLoading: boolean;
   isError: boolean;
-  isOffline: boolean; 
+  isOffline: boolean;
 
   // Actions
   fetchUsers: (page: number) => Promise<void>;
@@ -25,25 +26,32 @@ export const useStore = create<AppState>((set, get) => ({
     set({ isLoading: true, isError: false });
 
     try {
-      const cachedUsers = await db.users.where('pageFetched').equals(page).toArray();
+      const cachedUsers = await db.users
+        .where("pageFetched")
+        .equals(page)
+        .toArray();
 
       if (cachedUsers.length > 0) {
         const currentUsers = get().users;
         const newUsers = [
-            ...currentUsers, 
-            ...cachedUsers.filter(u => !currentUsers.find(cu => cu.uuid === u.uuid))
+          ...currentUsers,
+          ...cachedUsers.filter(
+            (u) => !currentUsers.find((cu) => cu.uuid === u.uuid)
+          ),
         ];
-        
+
         set({ users: newUsers, isLoading: false, isOffline: false });
         return;
       }
 
-      const res = await fetch(`https://randomuser.me/api/?page=${page}&results=${perPage}`);
-      
-      if (!res.ok) throw new Error('API Error');
-      
+      const res = await fetch(
+        `https://randomuser.me/api/?page=${page}&results=${perPage}`
+      );
+
+      if (!res.ok) throw new Error("API Error");
+
       const data = await res.json();
-      
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const newUsers: User[] = data.results.map((u: any) => ({
         uuid: u.login.uuid,
@@ -51,7 +59,7 @@ export const useStore = create<AppState>((set, get) => ({
         email: u.email,
         image: u.picture.large,
         isFavorite: false,
-        pageFetched: page
+        pageFetched: page,
       }));
 
       await db.users.bulkPut(newUsers);
@@ -59,33 +67,34 @@ export const useStore = create<AppState>((set, get) => ({
       set((state) => ({
         users: [...state.users, ...newUsers],
         isLoading: false,
-        isOffline: false
+        isOffline: false,
       }));
-
     } catch (error) {
-      console.error('Fetch failed:', error);
-    
+      console.error("Fetch failed:", error);
+
       const allCached = await db.users.toArray();
-      set({ 
-        isLoading: false, 
-        isError: true, 
+      set({
+        isLoading: false,
+        isError: true,
         isOffline: true,
-        users: allCached
+        users: allCached,
       });
     }
   },
 
   toggleFavorite: async (uuid: string) => {
+    const currentUser = get().users.find((u) => u.uuid === uuid);
+    if (!currentUser) return;
+
+    const newStatus = !currentUser.isFavorite;
+    
     set((state) => ({
-      users: state.users.map((u) => 
-        u.uuid === uuid ? { ...u, isFavorite: !u.isFavorite } : u
-      )
+      users: state.users.map((u) =>
+        u.uuid === uuid ? { ...u, isFavorite: newStatus } : u
+      ),
     }));
 
-    const user = await db.users.get(uuid);
-    if (user) {
-      await db.users.update(uuid, { isFavorite: !user.isFavorite });
-    }
+    await db.users.update(uuid, { isFavorite: newStatus });
   },
 
   setPage: (page: number) => set({ currentPage: page }),

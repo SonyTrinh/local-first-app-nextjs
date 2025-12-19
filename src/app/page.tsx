@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import Image from "next/image";
 import { useStore } from "@/store/useStore";
+import Image from "next/image";
 import AppHeader from "@/components/app-header";
 import FavoriteButton from "@/components/favorite-button";
 import Pagination from "@/components/pagination";
@@ -35,7 +35,7 @@ export default function Home() {
 
         {/* Loading */}
         {isLoading && paginatedUsers.length === 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
             {Array.from({ length: USERS_PER_PAGE }).map((_, i) => (
               <div
                 key={i}
