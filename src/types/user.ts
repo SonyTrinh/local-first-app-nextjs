@@ -3,6 +3,6 @@ export interface User {
   name: string;
   email: string;
   image: string;
-  isFavorite: boolean; // Persisted local state
+  isFavorite: boolean;
   pageFetched: number;
 }

@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Local-First Explorer
 
-## Getting Started
+A high-performance, offline-capable user directory application built with Next.js, Zustand, and Dexie.js (IndexedDB).
 
-First, run the development server:
+## How to install dependencies
+
+To install the project dependencies, run:
+
+```bash
+npm install
+```
+
+## How to run the project
+
+To start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How to simulate offline/failure scenarios
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Offline Mode
+1. Open Chrome DevTools (Press `F12` or `Cmd+Option+I`).
+2. Go to the **Network** tab.
+3. Locate the "No throttling" dropdown (usually near the top).
+4. Select **Offline**.
+5. Navigate through the app or reload the page.
+   - **Expected behavior**: The app should continue to display previously loaded users from IndexedDB. An "Offline Mode" indicator will appear in the header.
 
-## Learn More
+### API Failure
+1. In the **Network** tab, create a Request Blocking pattern for `randomuser.me`.
+2. Reload the page (while ensuring "Offline" is unchecked).
+3. **Expected behavior**: The app will attempt to fetch, fail, and then fallback to displaying cached data from Dexie.js if available. If no cache exists, an error state is shown.
 
-To learn more about Next.js, take a look at the following resources:
+## Known issues or limitations
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Random Data Consistency**: Since the app uses `randomuser.me`, fetching "Page 1" twice might return completely different users if the cache is cleared or missing. The app prefers local cache to mitigate this, but fresh fetches will introduce new random data.
+2. **Image Caching**: While user data is stored in IndexedDB, user images rely on the browser's standard disk cache. If the browser cache is cleared, images might not load while offline.
+3. **Pagination Limit**: The current pagination implementation assumes a continuous stream of pages but doesn't implement a "Total Pages" limit since the API is infinite.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## What you would improve with more time
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Service Worker (PWA)**: Implement a Service Worker to cache JS/CSS bundles and image assets, making the app fully installable and functional even without any network headers.
+2. **Virtualization**: Use `react-window` or `tanstack-virtual` for the user grid to maintain high performance if the user stores thousands of profiles locally.
+3. **Sync Engine**: dedicated synchronization logic to handle conflicts or efficiently update stale data (e.g., "stale-while-revalidate" pattern for the DB data).
+4. **Testing**: Add unit tests for the Zustand store actions and integration tests (Playwright) for the offline capabilities.
