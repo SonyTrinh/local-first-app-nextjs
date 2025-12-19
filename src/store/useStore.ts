@@ -8,11 +8,21 @@ interface AppState {
   isLoading: boolean;
   isError: boolean;
   isOffline: boolean;
+  
+  // New States
+  searchQuery: string;
+  sortBy: "name" | "email" | "none";
+  sortOrder: "asc" | "desc";
+  theme: "light" | "dark";
 
   // Actions
-  fetchUsers: (page: number) => Promise<void>;
+  fetchUsers: (page: number, perPage?: number) => Promise<void>;
   toggleFavorite: (uuid: string) => Promise<void>;
   setPage: (page: number) => void;
+  setSearchQuery: (query: string) => void;
+  setSortBy: (field: "name" | "email" | "none") => void;
+  toggleSortOrder: () => void;
+  toggleTheme: () => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -21,6 +31,10 @@ export const useStore = create<AppState>((set, get) => ({
   isLoading: true,
   isError: false,
   isOffline: false,
+  searchQuery: "",
+  sortBy: "none",
+  sortOrder: "asc",
+  theme: "light",
 
   fetchUsers: async (page: number, perPage = 10) => {
     set({ isLoading: true, isError: false });
@@ -98,4 +112,8 @@ export const useStore = create<AppState>((set, get) => ({
   },
 
   setPage: (page: number) => set({ currentPage: page }),
+  setSearchQuery: (query: string) => set({ searchQuery: query }),
+  setSortBy: (field) => set({ sortBy: field }),
+  toggleSortOrder: () => set((state) => ({ sortOrder: state.sortOrder === "asc" ? "desc" : "asc" })),
+  toggleTheme: () => set((state) => ({ theme: state.theme === "light" ? "dark" : "light" })),
 }));
