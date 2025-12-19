@@ -4,10 +4,14 @@ A high-performance, offline-capable user directory application built with Next.j
 
 ## How to install dependencies
 
-To install the project dependencies, run:
+To install the project dependencies, run one of the following:
 
 ```bash
 npm install
+# or
+yarn install
+# or
+pnpm install
 ```
 
 ## How to run the project
@@ -16,6 +20,10 @@ To start the development server:
 
 ```bash
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
